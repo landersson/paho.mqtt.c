@@ -3704,7 +3704,7 @@ static MQTTPacket* MQTTAsync_cycle(int* sock, unsigned long timeout, int* rc)
 		}
 		if (pack)
 		{
-			int freed = 1;
+			int free_pack = 0;
 
 			/* Note that these handle... functions free the packet structure that they are dealing with */
 			if (pack->header.bits.type == PUBLISH)
@@ -3721,16 +3721,19 @@ static MQTTPacket* MQTTAsync_cycle(int* sock, unsigned long timeout, int* rc)
 				{
 					//ack = *(Pubcomp*)pack;
 					*rc = MQTTProtocol_handlePubcomps(pack, *sock);
+                    free_pack = 1;
 				}
 				else if (pack->header.bits.type == PUBREC)
 				{
 					//ack = *(Pubrec*)pack;
 					*rc = MQTTProtocol_handlePubrecs(pack, *sock);
+                    free_pack = 1;
 				}
 				else if (pack->header.bits.type == PUBACK)
 				{
 					//ack = *(Puback*)pack;
 					*rc = MQTTProtocol_handlePubacks(pack, *sock);
+                    free_pack = 1;
 				}
 				if (!m)
 					Log(LOG_ERROR, -1, "PUBCOMP, PUBACK or PUBREC received for no client, msgid %d", msgid);
@@ -3799,10 +3802,12 @@ static MQTTPacket* MQTTAsync_cycle(int* sock, unsigned long timeout, int* rc)
 				*rc = MQTTProtocol_handlePubrels(pack, *sock);
 			else if (pack->header.bits.type == PINGRESP)
 				*rc = MQTTProtocol_handlePingresps(pack, *sock);
-			else
-				freed = 0;
-			if (freed)
+
+			if (free_pack)
+            {
+                free(pack);
 				pack = NULL;
+            }
 		}
 	}
 	MQTTAsync_retry();

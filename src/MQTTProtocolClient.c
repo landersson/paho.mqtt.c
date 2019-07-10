@@ -386,7 +386,7 @@ int MQTTProtocol_handlePubacks(void* pack, int sock)
 	}
 	if (puback->MQTTVersion >= MQTTVERSION_5)
 		MQTTProperties_free(&puback->properties);
-	free(pack);
+	/*free(pack);*/
 	FUNC_EXIT_RC(rc);
 	return rc;
 }
@@ -455,7 +455,7 @@ int MQTTProtocol_handlePubrecs(void* pack, int sock)
 	}
 	if (pubrec->MQTTVersion >= MQTTVERSION_5)
 		MQTTProperties_free(&pubrec->properties);
-	free(pack);
+	/*free(pack);*/
 	FUNC_EXIT_RC(rc);
 	return rc;
 }
@@ -591,7 +591,7 @@ int MQTTProtocol_handlePubcomps(void* pack, int sock)
 	}
 	if (pubcomp->MQTTVersion >= MQTTVERSION_5)
 		MQTTProperties_free(&pubcomp->properties);
-	free(pack);
+	/*free(pack);*/
 	FUNC_EXIT_RC(rc);
 	return rc;
 }
